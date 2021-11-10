@@ -1,0 +1,50 @@
+import plantas.*
+import parcelas.*
+
+describe "Test De Plantas" {
+	const menta1 = new Menta(altura = 1)
+	const menta2 = new Menta(altura = 0.3)
+	const soja1 = new Soja(anioDeObtencion = 2009, altura = 0.6)
+	const quinoa1 = new Quinoa(anioDeObtencion = 2010, horasDeSolTolera = 12)
+	const quinoa2 = new Quinoa(anioDeObtencion = 2001, horasDeSolTolera = 9)
+	test "Una planta de Menta de 1 metro de altura deberia dar semillas y ocupar 3 m2." {
+		assert.that(menta1.daNuevasSemillas())
+		assert.equals(menta1.espacioQueOcupa(), 3)
+	}
+	test "Una planta de Menta de 0.3 metros de altura NO deberia dar semillas y ocuparia 0.9 m2" {
+		assert.notThat(menta2.daNuevasSemillas())
+		assert.equals(menta2.espacioQueOcupa(), 0.9)
+	}
+	test "Una planta de Soja de 0.6 metros de altura y de semilla de 2009 NO deberia dar semillas y debaria ocupar 0.3 m2." {
+		assert.equals(soja1.horasDeSolTolera(), 7)
+		assert.notThat(soja1.daNuevasSemillas())
+		assert.equals(soja1.espacioQueOcupa(), 0.3)
+	}
+	test "Una planta de Quinoa que tolera 12 hs de sol y su semilla es de 2010, da semillas." {
+		assert.that(quinoa1.daNuevasSemillas())
+	}
+	test "Una planta de Quinoa que tolera 9 hs de sol y su semilla es de 2011, da semillas" {
+		assert.that(quinoa2.daNuevasSemillas())
+	}
+}
+
+describe "Tests de Parcelas" {
+	const parcela1 = new Parcelas(ancho = 20, largo = 1, horasDeSol = 8)
+	const soja1 = new Soja(altura = 1.5)
+	const soja2 = new Soja(altura = 2)
+	const soja3 = new Soja(altura = 1.8)
+	const soja4 = new Soja(altura = 2.2)
+	const soja5 = new Soja(altura = 2.6)
+	test "Una parcela de 20 mts de ancho por 1 mt de largo que recibe 8 hs de sol por dia, tiene una superficie de 20 m2 y la cantidad maxima de plantas que tolera es de 4." {
+		assert.equals(parcela1.superficie(), 20)
+		assert.equals(parcela1.cantidadMaxima(), 4)
+	}
+	test "Si le agregamos 4 plantas de soja de mas de 1 mt (que toleran 9 hs de sol), no tendria complicaciones.Al agregar una quinta planta debe lanzar un error." {
+		parcela1.plantar(soja1)
+		parcela1.plantar(soja2)
+		parcela1.plantar(soja3)
+		parcela1.plantar(soja4)
+		assert.notThat(parcela1.tieneComplicaciones())
+		assert.throwsExceptionWithMessage("Se llego al limite de la cantidad maxima de plantas o la planta no tolera las horas de sol de la parcela.", {parcela1.plantar(soja5)})
+		}
+}
